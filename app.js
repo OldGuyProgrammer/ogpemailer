@@ -10,6 +10,7 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 import bodyParser from "body-parser";
 import morgan from "morgan";
+import mailSender from "./components/mailSender.js";
 
 const app = express();
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -17,7 +18,10 @@ const PORT = process.env.PORT || 3000;
 
 console.log("OGP Web Site Contact Us Server started.");
 
-app.use(morgan("tiny"));
+app.use(
+  morgan("Route: :method :url. Reponse time: :response-time. Date: :date()")
+);
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
@@ -32,8 +36,9 @@ process.on("SIGINT", () => {
 
 app.post("/savecontact", (req, res) => {
   console.log("Request to save contact received");
-  const mailData = req.body;
-  console.log(req.body);
+  const mailTo = req.body.mailTo;
+  const message = req.body.message;
+  mailSender(mailTo, message);
   res.send("<h1>Request to save Contact</h1>");
 });
 
@@ -41,6 +46,12 @@ app.get("/shutdown", async (req, res) => {
   console.log("OGP Web Site Contact Us Server ending...");
   res.send("<h1>Request shut down server</h1>");
   process.exit();
+});
+
+app.all("*", async (req, res) => {
+  console.log("Default Route Triggered.");
+  res.statusCode = 404;
+  res.send("<h1>You picked the wrong route, buddy</h1>");
 });
 
 app.listen(PORT, () => {
