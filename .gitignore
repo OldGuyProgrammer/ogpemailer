@@ -3,3 +3,5 @@
 # For example we ignore the hidden files from Pycharm and VS Code.
 node_modules/
 server.hideme.js
+package-lock.json
+views/email.handlebars
