@@ -37,8 +37,10 @@ process.on("SIGINT", () => {
 app.post("/savecontact", (req, res) => {
   console.log("Request to save contact received");
   const mailTo = req.body.mailTo;
+  const eMailFrom = req.body.eMailFrom;
+  const mailFromName = req.body.mailFromName;
   const message = req.body.message;
-  mailSender(mailTo, message);
+  mailSender(eMailFrom, mailFromName, message);
   res.send("<h1>Request to save Contact</h1>");
 });
 
