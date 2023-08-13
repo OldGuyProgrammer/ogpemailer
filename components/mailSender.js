@@ -7,22 +7,14 @@
 // Jim Olivi 2003
 //
 
-import nodemailer from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
 import path from "path";
 import Environment from "./environment.js";
+import { createTransport } from "./utilities.js";
 
-async function sendToProspect(messageFrom) {
+async function sendToProspect(messageFrom, mailFromName, message) {
   // initialize nodemailer
-  const transporter = nodemailer.createTransport({
-    host: "sandbox.smtp.mailtrap.io",
-    port: 2525,
-    auth: {
-      user: "f215753705d0ab",
-      pass: "53d266c7542de0",
-    },
-  });
-
+  const transporter = createTransport();
   // point to the template folder
   const handlebarOptions = {
     viewEngine: {
@@ -39,7 +31,7 @@ async function sendToProspect(messageFrom) {
 
   let copyRightYear = new Date().getFullYear();
 
-  const mailOptions = {
+  let mailOptions = {
     from: '"Jim Olivi" <ogprogrammer@ogp.io>', // sender address
     to: messageFrom, // list of receivers
     subject: "Thank You for Contacting the Old Guy Programmer Team.",
@@ -49,11 +41,10 @@ async function sendToProspect(messageFrom) {
     },
   };
 
-  // trigger the sending of the E-mail
+  // trigger the sending of the E-mails
   const env = new Environment();
-  const sendEmails = env.sendEmails();
-  console.log(`Send emails: ${sendEmails}`);
-  if (sendEmails) {
+
+  if (env.sendProspectEmails()) {
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         return console.log(error);
@@ -63,13 +54,37 @@ async function sendToProspect(messageFrom) {
       return info;
     });
   } else {
-    console.log("Email Switch turned off.");
-    return "No emails sent";
+    console.log("Propect Email Switch turned off.");
+  }
+
+  mailOptions = {
+    from: '"Jim Olivi" <ogprogrammer@ogp.io>', // sender address
+    to: "ogprogrammer@ogp.io", // list of receivers
+    subject: "Thank You for Contacting the Old Guy Programmer Team.",
+    template: "notifyOGP", // the name of the template file i.e email.handlebars
+    context: {
+      message: message,
+      mailFromName: mailFromName,
+      messageFrom: messageFrom,
+    },
+  };
+
+  if (env.sendOGPEmails()) {
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        return console.log(error);
+      }
+      console.log("Message sent: " + info.response);
+
+      return info;
+    });
+  } else {
+    console.log("OGP Email Switch turned off.");
   }
 }
 
 async function mailSender(eMailFrom, mailFromName, message) {
-  await sendToProspect(eMailFrom);
+  await sendToProspect(eMailFrom, mailFromName, message);
 }
 
 export default mailSender;

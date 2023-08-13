@@ -9,6 +9,7 @@
 import nodemailer from "nodemailer";
 import hbs from "nodemailer-express-handlebars";
 import path from "path";
+import Environment from "./environment.js";
 
 async function sendToSupport(eMailFrom, mailFromName, message) {
   // initialize nodemailer
@@ -46,14 +47,21 @@ async function sendToSupport(eMailFrom, mailFromName, message) {
   };
 
   // trigger the sending of the E-mail
-  transporter.sendMail(mailOptions, function (error, info) {
-    if (error) {
-      return console.log(error);
-    }
-    console.log("Message sent: " + info.response);
+  const env = new Environment();
+  const sendEmails = env.sendEmails();
+  if (sendEmails) {
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        return console.log(error);
+      }
+      console.log("Message sent: " + info.response);
 
-    return info;
-  });
+      return info;
+    });
+  } else {
+    console.log("Email Switch turned off.");
+    return "No emails sent to OGP Support";
+  }
 }
 
 async function sendToOGP(eMailFrom, mailFromName, message) {

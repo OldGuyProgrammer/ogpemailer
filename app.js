@@ -1,5 +1,5 @@
 //
-// OGP Web Site Contatuc Server.
+// OGP Web Site Contatus Server.
 // Send email to client upon Contact Us request
 //
 // Jim Olivi 2003
@@ -14,7 +14,7 @@ import mailSender from "./components/mailSender.js";
 
 const app = express();
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const PORT = process.env.PORT || 3000;
+const PORT = 3001;
 
 console.log("OGP Web Site Contact Us Server started.");
 

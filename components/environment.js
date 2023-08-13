@@ -10,11 +10,20 @@ import dotenv from "dotenv";
 class Environment {
   constructor() {
     dotenv.config();
-    this.doEmails = process.env.SEND_EMAILS;
+    this.doPropectEmails = process.env.SEND_PROSPECT_EMAILS;
+    this.doOGPEmails = process.env.SEND_OGP_EMAILS;
   }
 
-  sendEmails() {
-    if (this.doEmails === "true") {
+  sendProspectEmails() {
+    if (this.doPropectEmails === "true") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  sendOGPEmails() {
+    if (this.doOGPEmails === "true") {
       return true;
     } else {
       return false;
