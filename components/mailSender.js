@@ -55,6 +55,7 @@ async function sendToProspect(messageFrom, mailFromName, message) {
     });
   } else {
     console.log("Propect Email Switch turned off.");
+    console.log(mailOptions);
   }
 
   mailOptions = {
@@ -80,10 +81,12 @@ async function sendToProspect(messageFrom, mailFromName, message) {
     });
   } else {
     console.log("OGP Email Switch turned off.");
+    console.log(mailOptions);
   }
 }
 
 async function mailSender(eMailFrom, mailFromName, message) {
+  console.log(`Message received: ${eMailFrom}, ${mailFromName}, ${message}`);
   await sendToProspect(eMailFrom, mailFromName, message);
 }
 

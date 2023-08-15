@@ -11,6 +11,7 @@ import { fileURLToPath } from "url";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import mailSender from "./components/mailSender.js";
+import path from "path";
 
 const app = express();
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -36,12 +37,12 @@ process.on("SIGINT", () => {
 
 app.post("/savecontact", (req, res) => {
   console.log("Request to save contact received");
-  const mailTo = req.body.mailTo;
   const eMailFrom = req.body.eMailFrom;
   const mailFromName = req.body.mailFromName;
   const message = req.body.message;
   mailSender(eMailFrom, mailFromName, message);
-  res.send("<h1>Request to save Contact</h1>");
+  res.statusCode = 201;
+  res.send("Contact information saved.");
 });
 
 app.get("/shutdown", async (req, res) => {

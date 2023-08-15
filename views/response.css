@@ -1,0 +1,28 @@
+body {
+    background-color: beige;
+    font-family: "Gideon Roman";
+}
+
+h1 {
+    color: brown;
+}
+
+span {
+    margin-top: 1em;
+}
+
+.text-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.signature {
+    font-weight: bold;
+    font-size: 1.5em;
+    font-style: italic;
+}
+
+.closer {
+    font-weight: bold;
+    font-size: 1.5em;
+}
