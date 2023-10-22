@@ -1,5 +1,5 @@
 //
-// OGP Web Site Contatuc Server.
+// OGP Web Site Contatus Server.
 // utility functions that can be used by any module.
 //
 //

@@ -12,10 +12,13 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 import mailSender from "./components/mailSender.js";
 import path from "path";
+import { initializeFirebase, saveMessgeInfo } from "./components/firebase.js";
 
 const app = express();
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = 3001;
+
+initializeFirebase();
 
 console.log("OGP Web Site Contact Us Server started.");
 
@@ -45,13 +48,33 @@ process.on("SIGINT", () => {
 });
 
 app.post("/savecontact", (req, res) => {
-  console.log("Request to save contact received");
   const eMailFrom = req.body.eMailFrom;
   const mailFromName = req.body.mailFromName;
   const message = req.body.message;
-  mailSender(eMailFrom, mailFromName, message);
-  res.statusCode = 201;
-  res.send("Contact information saved.");
+  if (
+    eMailFrom == undefined ||
+    mailFromName == undefined ||
+    message == undefined
+  ) {
+    const msg = {
+      code: 204,
+      msg: "Not enough information sent.",
+    };
+    console.log(msg);
+    res.statusCode = 204;
+    res.json(msg);
+  } else {
+    mailSender(eMailFrom, mailFromName, message);
+    const msg = {
+      code: 201,
+      msg: "Contact information saved. Emails sent",
+    };
+
+    saveMessgeInfo(eMailFrom, mailFromName, message);
+
+    res.statusCode = 201;
+    res.json(msg);
+  }
 });
 
 app.get("/shutdown", async (req, res) => {
@@ -60,10 +83,15 @@ app.get("/shutdown", async (req, res) => {
   process.exit();
 });
 
+app.get("/ping", async (req, res) => {
+  console.log("OGP Web Ping Request");
+  res.send("<h1>Here's back to Ya!</h1>");
+});
+
 app.all("*", async (req, res) => {
   console.log("Default Route Triggered.");
   res.statusCode = 404;
-  res.send("<h1>You picked the wrong route, buddy</h1>");
+  res.sendFile(path.join(__dirname, "/views/error.html"));
 });
 
 app.listen(PORT, () => {
