@@ -14,12 +14,16 @@ import {
   Timestamp,
   FieldValue,
   Filter,
+  Firestore,
 } from "firebase-admin/firestore";
+import "dotenv/config";
 
-import serviceAccount from "../oldguyprogrammer-firebase-adminsdk-1a42h-22bafb575c.json" assert { type: "json" };
+import serviceAccount from "../firebase_auth.json" assert { type: "json" };
 
 var db;
 export function initializeFirebase() {
+  serviceAccount.private_key_id = process.env.PRIVATE_KEY_ID;
+  serviceAccount.private_key = process.env.PRIVATE_KEY;
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
@@ -40,13 +44,15 @@ export function initializeFirebase() {
 }
 
 export async function saveMessgeInfo(eMailFrom, mailFromName, message) {
+  const data = {
+    timestamp: Firestore.Timestamp.now(),
+    emailfrom: eMailFrom,
+    mailFromName: mailFromName,
+    message: message,
+  };
   const res = await db
     .collection("messages")
-    .add({
-      emailfrom: eMailFrom,
-      mailFromName: mailFromName,
-      message: message,
-    })
-    .catch((err) => console.log(`Error code: ${err}`));
-  console.log(`Message saved with ID:. ${res.id}`);
+    .add(data)
+    .catch((err) => console.log(`Error code: ${err}`))
+    .then((ret) => console.log(`Message saved with ID:. ${ret.id}`));
 }

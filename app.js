@@ -13,10 +13,11 @@ import morgan from "morgan";
 import mailSender from "./components/mailSender.js";
 import path from "path";
 import { initializeFirebase, saveMessgeInfo } from "./components/firebase.js";
+import cors from "cors";
 
 const app = express();
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const PORT = 3001;
+const PORT = process.env.PORT;
 
 initializeFirebase();
 
@@ -27,6 +28,8 @@ app.use(
 );
 
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(cors());
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -71,7 +74,6 @@ app.post("/savecontact", (req, res) => {
     };
 
     saveMessgeInfo(eMailFrom, mailFromName, message);
-
     res.statusCode = 201;
     res.json(msg);
   }
