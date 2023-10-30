@@ -23,7 +23,8 @@ import serviceAccount from "../firebase_auth.json" assert { type: "json" };
 var db;
 export function initializeFirebase() {
   serviceAccount.private_key_id = process.env.PRIVATE_KEY_ID;
-  serviceAccount.private_key = process.env.PRIVATE_KEY;
+  serviceAccount.private_key = process.env.PRIVATE_KEY.replace(/\\n/g, "\n");
+  // console.log(serviceAccount.private_key);
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
