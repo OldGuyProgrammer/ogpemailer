@@ -6,4 +6,3 @@ firebase_auth.json
 node_modules/
 server.hideme.js
 package-lock.json
-views/email.handlebars
