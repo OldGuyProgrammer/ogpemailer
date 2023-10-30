@@ -7,6 +7,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
   },
+  "keywords": [
+    "example",
+    "heroku"
+  ],
+  "engines": {
+    "node": "18.x"
+  },
   "author": "Jim Olivi",
   "license": "ISC",
   "type": "module",
@@ -20,5 +27,8 @@
     "morgan": "^1.10.0",
     "nodemailer": "^6.9.4",
     "nodemailer-express-handlebars": "^6.1.0"
+  },
+  "devDependencies": {
+    "firebase-tools": "^12.7.0"
   }
 }
