@@ -8,7 +8,6 @@
 
 // Cloud Firestore SDK
 import admin from "firebase-admin";
-import { initializeApp, applicationDefault, cert } from "firebase-admin/app";
 import {
   getFirestore,
   Timestamp,
@@ -17,7 +16,6 @@ import {
   Firestore,
 } from "firebase-admin/firestore";
 import "dotenv/config";
-
 import serviceAccount from "../firebase_auth.json" assert { type: "json" };
 
 var db;
@@ -45,15 +43,19 @@ export function initializeFirebase() {
 }
 
 export async function saveMessgeInfo(eMailFrom, mailFromName, message) {
-  const data = {
-    timestamp: Firestore.Timestamp.now(),
-    emailfrom: eMailFrom,
-    mailFromName: mailFromName,
-    message: message,
-  };
-  const res = await db
-    .collection("messages")
-    .add(data)
-    .catch((err) => console.log(`Error code: ${err}`))
-    .then((ret) => console.log(`Message saved with ID:. ${ret.id}`));
+  if (process.env.SAVE_MESSAGE_DATA) {
+    const data = {
+      timestamp: Firestore.Timestamp.now(),
+      emailfrom: eMailFrom,
+      mailFromName: mailFromName,
+      message: message,
+    };
+    const res = await db
+      .collection("messages")
+      .add(data)
+      .catch((err) => console.log(`Error code: ${err}`))
+      .then((ret) => console.log(`Message saved with ID:. ${ret.id}`));
+  } else {
+    console.log("Save Data Switch turned off.");
+  }
 }

@@ -9,10 +9,11 @@
 
 import hbs from "nodemailer-express-handlebars";
 import path from "path";
-import Environment from "./environment.js";
+import "dotenv";
+import nodemailer from "nodemailer";
 import { createTransport } from "./utilities.js";
 
-async function sendToProspect(messageFrom, mailFromName, message) {
+function sendToProspect(messageFrom, mailFromName, message) {
   // initialize nodemailer
   const transporter = createTransport();
   // point to the template folder
@@ -41,10 +42,7 @@ async function sendToProspect(messageFrom, mailFromName, message) {
     },
   };
 
-  // trigger the sending of the E-mails
-  const env = new Environment();
-
-  if (env.sendProspectEmails()) {
+  if (process.env.SEND_PROSPECT_EMAILS) {
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         return console.log(error);
@@ -70,14 +68,42 @@ async function sendToProspect(messageFrom, mailFromName, message) {
     },
   };
 
-  if (env.sendOGPEmails()) {
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        return console.log(error);
-      }
-      console.log("Message sent: " + info.response);
+  //
+  // Send message to OGP that a ContactUs was submitted.
+  //
+  if (process.env.SEND_OGP_EMAILS) {
+    const poolConfig =
+      "smtps://" +
+      process.env.EMAIL_ID +
+      ":" +
+      process.env.EMAIL_PASSWORD +
+      "@mail.hover.com/?pool=true";
+    const ogpTransporter = nodemailer.createTransport(poolConfig);
 
-      return info;
+    const ogpMessage =
+      "Message from: " +
+      mailFromName +
+      "\nEmail:" +
+      messageFrom +
+      "\n" +
+      message;
+    console.log(ogpMessage);
+    const mailOptions = {
+      from: "jim@oldguyprogrammer.com",
+      to: "jim@oldguyprogrammer.com",
+      subject: "OGP Message received",
+      text: ogpMessage,
+    };
+    ogpTransporter.verify((error, success) => {
+      if (error) {
+        console.log(error);
+      } else {
+        ogpTransporter.sendMail(mailOptions, function (err, data) {
+          if (err) {
+            console.log("Error" + err);
+          }
+        });
+      }
     });
   } else {
     console.log("OGP Email Switch turned off.");
