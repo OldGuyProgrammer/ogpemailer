@@ -14,6 +14,7 @@ import mailSender from "./components/mailSender.js";
 import path from "path";
 import { initializeFirebase, saveMessgeInfo } from "./components/firebase.js";
 import cors from "cors";
+import rateLimit from "express-rate-limit";
 
 const app = express();
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -23,9 +24,21 @@ initializeFirebase();
 
 console.log("OGP Web Site Contact Us Server started.");
 
+//
+// Middleware
+//
+
 app.use(
   morgan("Route: :method :url. Reponse time: :response-time. Date: :date()")
 );
+
+const limiter = rateLimit({
+  limit: 100, // Number of hits allowed per time window.
+  windowMs: 60 * 60 * 1000, // Milliseconds in an hour
+  message: "STOP - STOP Quit trying to clog this web site!",
+});
+
+app.use(limiter);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
@@ -37,11 +50,6 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
   );
-  next();
-});
-
-app.use((req, res, next) => {
-  console.log("Put authentication stuff here");
   next();
 });
 
@@ -90,11 +98,11 @@ app.get("/ping", async (req, res) => {
   res.send("<h1>Here's back to Ya!</h1>");
 });
 
-app.all("*", async (req, res) => {
-  console.log("Default Route Triggered.");
-  res.statusCode = 404;
-  res.sendFile(path.join(__dirname, "/views/error.html"));
-});
+// app.all("*", async (req, res) => {
+//   console.log("Default Route Triggered.");
+//   res.statusCode = 404;
+//   res.sendFile(path.join(__dirname, "/views/error.html"));
+// });
 
 app.listen(PORT, () => {
   console.log("OGP contact server started: " + new Date());

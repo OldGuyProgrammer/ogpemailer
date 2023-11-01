@@ -11,11 +11,21 @@ import hbs from "nodemailer-express-handlebars";
 import path from "path";
 import "dotenv";
 import nodemailer from "nodemailer";
-import { createTransport } from "./utilities.js";
+// import { createTransport } from "./utilities.js";
+
+const getPoolConfig = () => {
+  return (
+    "smtps://" +
+    process.env.EMAIL_ID +
+    ":" +
+    process.env.EMAIL_PASSWORD +
+    "@mail.hover.com/?pool=true"
+  );
+};
 
 function sendToProspect(messageFrom, mailFromName, message) {
   // initialize nodemailer
-  const transporter = createTransport();
+  const transporter = nodemailer.createTransport(getPoolConfig());
   // point to the template folder
   const handlebarOptions = {
     viewEngine: {
@@ -30,11 +40,11 @@ function sendToProspect(messageFrom, mailFromName, message) {
 
   // Get Copyright date
 
-  let copyRightYear = new Date().getFullYear();
+  var copyRightYear = new Date().getFullYear();
 
-  let mailOptions = {
-    from: '"Jim Olivi" <ogprogrammer@ogp.io>', // sender address
-    to: messageFrom, // list of receivers
+  var mailOptions = {
+    from: '"info" <info@oldguyprogrammer.com>', // sender address
+    to: messageFrom,
     subject: "Thank You for Contacting the Old Guy Programmer Team.",
     template: "reply", // the name of the template file i.e email.handlebars
     context: {
@@ -72,13 +82,14 @@ function sendToProspect(messageFrom, mailFromName, message) {
   // Send message to OGP that a ContactUs was submitted.
   //
   if (process.env.SEND_OGP_EMAILS) {
-    const poolConfig =
-      "smtps://" +
-      process.env.EMAIL_ID +
-      ":" +
-      process.env.EMAIL_PASSWORD +
-      "@mail.hover.com/?pool=true";
-    const ogpTransporter = nodemailer.createTransport(poolConfig);
+    if (!process.env.EMAIL_ID) {
+      console.log("EMAIL_ID environment variable not set.");
+    }
+    if (!process.env.EMAIL_PASSWORD) {
+      console.log("EMAIL_PASSWORD environment variable not set.");
+    }
+
+    const transporter = nodemailer.createTransport(getPoolConfig());
 
     const ogpMessage =
       "Message from: " +
@@ -94,11 +105,11 @@ function sendToProspect(messageFrom, mailFromName, message) {
       subject: "OGP Message received",
       text: ogpMessage,
     };
-    ogpTransporter.verify((error, success) => {
+    transporter.verify((error, success) => {
       if (error) {
         console.log(error);
       } else {
-        ogpTransporter.sendMail(mailOptions, function (err, data) {
+        transporter.sendMail(mailOptions, function (err, data) {
           if (err) {
             console.log("Error" + err);
           }
