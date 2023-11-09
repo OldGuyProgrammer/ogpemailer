@@ -11,7 +11,6 @@ import hbs from "nodemailer-express-handlebars";
 import path from "path";
 import "dotenv";
 import nodemailer from "nodemailer";
-// import { createTransport } from "./utilities.js";
 
 const getPoolConfig = () => {
   return (
@@ -23,7 +22,7 @@ const getPoolConfig = () => {
   );
 };
 
-function sendToProspect(messageFrom, mailFromName, message) {
+function sendToProspect(messageFrom, mailFromName, contactCompany, message) {
   // initialize nodemailer
   const transporter = nodemailer.createTransport(getPoolConfig());
   // point to the template folder
@@ -53,6 +52,7 @@ function sendToProspect(messageFrom, mailFromName, message) {
   };
 
   if (process.env.SEND_PROSPECT_EMAILS) {
+    // console.log(mailOptions);
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         return console.log(error);
@@ -94,11 +94,13 @@ function sendToProspect(messageFrom, mailFromName, message) {
     const ogpMessage =
       "Message from: " +
       mailFromName +
-      "\nEmail:" +
+      "\nEmail: " +
       messageFrom +
+      "\nCompany: " +
+      contactCompany +
       "\n" +
       message;
-    console.log(ogpMessage);
+    // console.log(ogpMessage);
     const mailOptions = {
       from: "jim@oldguyprogrammer.com",
       to: "jim@oldguyprogrammer.com",
@@ -122,9 +124,11 @@ function sendToProspect(messageFrom, mailFromName, message) {
   }
 }
 
-async function mailSender(eMailFrom, mailFromName, message) {
-  console.log(`Message received: ${eMailFrom}, ${mailFromName}, ${message}`);
-  await sendToProspect(eMailFrom, mailFromName, message);
+function mailSender(eMailFrom, mailFromName, contactCompany, message) {
+  console.log(
+    `Message received: ${eMailFrom}, ${mailFromName}, ${contactCompany}, ${message}`
+  );
+  sendToProspect(eMailFrom, mailFromName, contactCompany, message);
 }
 
 export default mailSender;

@@ -43,12 +43,18 @@ export function initializeFirebase() {
   console.log("OGP Server connected to Firestore.");
 }
 
-export async function saveMessgeInfo(eMailFrom, mailFromName, message) {
+export async function saveMessgeInfo(
+  eMailFrom,
+  mailFromName,
+  contactCompany,
+  message
+) {
   if (process.env.SAVE_MESSAGE_DATA) {
     const data = {
       timestamp: Firestore.Timestamp.now(),
       emailfrom: eMailFrom,
       mailFromName: mailFromName,
+      contactCompany: contactCompany,
       message: message,
     };
     const res = await db

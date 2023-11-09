@@ -11,7 +11,6 @@ import { fileURLToPath } from "url";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import mailSender from "./components/mailSender.js";
-import path from "path";
 import { initializeFirebase, saveMessgeInfo } from "./components/firebase.js";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
@@ -61,6 +60,7 @@ process.on("SIGINT", () => {
 app.post("/savecontact", (req, res) => {
   const eMailFrom = req.body.eMailFrom;
   const mailFromName = req.body.mailFromName;
+  const contactCompany = req.body.contactCompany;
   const message = req.body.message;
   if (
     eMailFrom == undefined ||
@@ -75,13 +75,13 @@ app.post("/savecontact", (req, res) => {
     res.statusCode = 204;
     res.json(msg);
   } else {
-    mailSender(eMailFrom, mailFromName, message);
+    mailSender(eMailFrom, mailFromName, contactCompany, message);
     const msg = {
       code: 201,
       msg: "Contact information saved. Emails sent",
     };
 
-    saveMessgeInfo(eMailFrom, mailFromName, message);
+    saveMessgeInfo(eMailFrom, mailFromName, contactCompany, message);
     res.statusCode = 201;
     res.json(msg);
   }
