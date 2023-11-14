@@ -98,11 +98,11 @@ app.get("/ping", async (req, res) => {
   res.send("<h1>Here's back to Ya!</h1>");
 });
 
-// app.all("*", async (req, res) => {
-//   console.log("Default Route Triggered.");
-//   res.statusCode = 404;
-//   res.sendFile(path.join(__dirname, "/views/error.html"));
-// });
+app.all("*", async (req, res) => {
+  console.log("Default Route Triggered.");
+  res.statusCode = 404;
+  res.sendFile(path.join(__dirname, "/views/error.html"));
+});
 
 app.listen(PORT, () => {
   console.log("OGP contact server started: " + new Date());
