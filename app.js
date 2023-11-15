@@ -17,7 +17,7 @@ import rateLimit from "express-rate-limit";
 
 const app = express();
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const PORT = process.env.PORT;
+const PORT = process.env.PORT; // Required for Heroku to find the port.
 
 initializeFirebase();
 
@@ -96,12 +96,6 @@ app.get("/shutdown", async (req, res) => {
 app.get("/ping", async (req, res) => {
   console.log("OGP Web Ping Request");
   res.send("<h1>Here's back to Ya!</h1>");
-});
-
-app.all("*", async (req, res) => {
-  console.log("Default Route Triggered.");
-  res.statusCode = 404;
-  res.sendFile(path.join(__dirname, "/views/error.html"));
 });
 
 app.listen(PORT, () => {
