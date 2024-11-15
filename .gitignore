@@ -3,3 +3,4 @@
 # For example we ignore the hidden files from Pycharm and VS Code.
 *.env
 node_modules/
+.vscode/

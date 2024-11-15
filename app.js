@@ -2,8 +2,12 @@
 // OGP Web Site Contatus Server.
 // Send email to client upon Contact Us request
 //
-// Jim Olivi 2003
+// Jim Olivi 2023
 //
+// Continued work November 2024
+// Integrate with Airport info Contact Us 
+//
+// Make this server work with generic OGP client side programs, including a proposed smartphone App
 
 import express from "express";
 import { dirname } from "path";
@@ -17,11 +21,17 @@ import rateLimit from "express-rate-limit";
 
 const app = express();
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const PORT = process.env.PORT; // Required for Heroku to find the port.
+var PORT = process.env.PORT; // Required for Heroku to find the port.
+if (PORT === undefined){
+  PORT = 3000;
+  console.log("Port not set, default to 3000")
+}
 
-initializeFirebase();
+
+// initializeFirebase();
 
 console.log("OGP Web Site Contact Us Server started.");
+console.log("Attempting to start on Port: " + PORT)
 
 //
 // Middleware

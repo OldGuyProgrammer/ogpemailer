@@ -4,7 +4,7 @@
 //
 // Mail sender component
 //
-// Jim Olivi 2003
+// Jim Olivi 2023
 //
 
 import hbs from "nodemailer-express-handlebars";
